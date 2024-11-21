@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Key for Keyhunt</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1e90ff, #ff7f50);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    button {
+      background: #ff7f50;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: #ff4500;
+      transform: scale(1.05);
+    }
+
+    button:active {
+      background: #d93800;
+      transform: scale(0.95);
+    }
+
+    #output, #command-output {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgb(13, 14, 17);
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    #command-output {
+      margin-bottom: 20px;
+      font-size: 1rem;
+      word-wrap: break-word;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      button {
+        font-size: 0.9rem;
+      }
+
+      #output, #command-output {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Generate a Number for Keyhunt</h1>
+  <button id="generate">Generate Hexadecimal</button>
+  <div id="output">Your generated number will appear here</div>
+  <div id="command-output">The Keyhunt command will appear here</div>
+  <button id="copyButton">Copy Command</button>
+
+  <script>
+    function generateHexadecimal() {
+      const hexChars = "123456789abcdef"; // Exclui o '0' para evitar começar ou terminar com zero
+      let hex = "";
+      hex += hexChars[Math.floor(Math.random() * hexChars.length)]; // Primeiro caractere
+      for (let i = 1; i < 10; i++) {
+        hex += "0123456789abcdef"[Math.floor(Math.random() * 16)]; // Caracteres intermediários
+      }
+      hex += "123456789abcdef"[Math.floor(Math.random() * 15)]; // Último caractere
+      return hex;
+    }
+
+    function updateHexAndCommand() {
+      const generatedHex = generateHexadecimal();
+      const fullHex = "1" + generatedHex + "000000"; // Concatenando 1 no início e 8 zeros ao final
+      document.getElementById("output").textContent = fullHex; // Exibindo o número gerado na tela
+
+      const keyhuntCommand = `./keyhunt -m address -f tests/1to32.txt -r ${fullHex}:1fffffffffffffffff -l compress -q -s 1`;
+      
+      // Exibindo o comando gerado na página
+      document.getElementById("command-output").textContent = `Keyhunt Command: ${keyhuntCommand}`;
+    }
+
+    // Atualizar ao carregar a página
+    window.onload = updateHexAndCommand;
+
+    // Atualizar ao clicar no botão
+    document.getElementById("generate").addEventListener("click", updateHexAndCommand);
+
+    // Função para copiar o comando para a área de transferência
+    document.getElementById("copyButton").addEventListener("click", () => {
+      const commandText = document.getElementById("command-output").textContent;
+      const textarea = document.createElement("textarea");
+      textarea.value = commandText.replace("Keyhunt Command: ", ""); // Removendo o prefixo
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      alert("Command copied to clipboard!");
+    });
+  </script>
+</body>
+</html>
