@@ -99,10 +99,10 @@
 
     function updateHexAndCommand() {
       const generatedHex = generateHexadecimal();
-      const fullHex = "17a1a7" + generatedHex + "000000"; // Concatenando 1 no início e 8 zeros ao final
+      const fullHex = "17a1a" + generatedHex + "000000"; // Concatenando 1 no início e 8 zeros ao final
       document.getElementById("output").textContent = fullHex; // Exibindo o número gerado na tela
 
-      const keyhuntCommand = `./keyhunt -m address -f tests/1to32.txt -r ${fullHex}:1fffffffffffffffff -l compress -q -s 1`;
+      const keyhuntCommand = `./keyhunt -m address -f tests/1to32.txt -r ${fullHex}:7ffffffffffffffff -l compress -q -s 1`;
       
       // Exibindo o comando gerado na página
       document.getElementById("command-output").textContent = `Keyhunt Command: ${keyhuntCommand}`;
